@@ -13,6 +13,11 @@ export default new Router({
       component: Signals
     },
     {
+      path: '/signals',
+      name: 'Signals',
+      component: Signals
+    },
+    {
       path: '/correlation',
       name: 'HelloWorld',
       component: HelloWorld

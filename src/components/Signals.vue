@@ -1,11 +1,44 @@
 <template>
   <v-container fluid>
     <v-slide-y-transition mode="out-in">
-      <v-layout column align-center>
-        Сигналов за неделю:
-  
+      <v-layout align-center justify-center>
+          <v-flex xs12>
+            <v-card class="elevation-12">
+              <v-toolbar dark color="primary">
+                <v-toolbar-title>Сигналы</v-toolbar-title>
+                <v-spacer></v-spacer>
+              </v-toolbar>
+              <v-card-text>
+                <span class="group pa-2">
+                    <v-icon>home</v-icon>Сигналов за неделю: 0
+                </span>
+                <v-layout>
+                  <v-flex xs12 sm6 d-flex>
+                     <v-select
+                       :items="exchange"
+                       label="Биржа"
+                       outline
+                     ></v-select>
+                   </v-flex>
+                   <v-flex xs12 sm6 d-flex>
+                      <v-select
+                        :disabled="pair_disabled"
+                        :items="items"
+                        label="Пара"
+                        outline
+                      ></v-select>
+                  </v-flex>
 
-      </v-layout>
+
+                </v-layout>
+              </v-card-text>
+              <!--<v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary">Login</v-btn>
+              </v-card-actions>-->
+            </v-card>
+          </v-flex>
+        </v-layout>
     </v-slide-y-transition>
   </v-container>
 </template>
@@ -68,7 +101,10 @@ import Vue from 'vue'
 export default {
     data: () => ({
       reviews: 413,
-      value: 4.5
+      value: 4.5,
+      pairs: '',
+      exchange: ['OKEX'],
+      pair_disabled: true
     })
   }
 

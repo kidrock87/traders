@@ -80,7 +80,7 @@ export default {
         {
           icon: 'bubble_chart',
           title: 'Корреляция',
-          link: "#/"
+          link: "#/correlation"
         },
         {
           icon: 'insert_chart',

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+import correlation from '@/components/correlation'
 import Signals from '@/components/Signals'
 
 Vue.use(Router)
@@ -19,8 +19,8 @@ export default new Router({
     },
     {
       path: '/correlation',
-      name: 'HelloWorld',
-      component: HelloWorld
+      name: 'correlation',
+      component: correlation
     }
   ]
 })

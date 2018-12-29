@@ -7,11 +7,11 @@
               <v-toolbar dark color="primary">
                 <v-toolbar-title>Сигналы</v-toolbar-title>
                 <v-spacer></v-spacer>
+                <v-btn icon @click.stop="settings_dialog = !settings_dialog">
+                  <v-icon>settings</v-icon>
+                </v-btn>
               </v-toolbar>
               <v-card-text>
-                <span class="group pa-2">
-                    <v-icon>home</v-icon>Сигналов за неделю: 0
-                </span>
                 <v-layout>
                   <v-flex xs12 sm6 d-flex>
                      <v-select
@@ -54,9 +54,11 @@
                     </v-data-table>
                   </v-flex>
                 </v-layout>
-                <v-layout v-else>
+                <v-layout v-else  column>
+                  Последние положительные сигналы
+                  <v-flex xs12 sm6 d-flex>
                       <v-data-iterator
-                        :items="items"
+                        :items="positive_signals"
                         :rows-per-page-items="rowsPerPageItems"
                         :pagination.sync="pagination"
                         content-tag="v-layout"
@@ -66,47 +68,76 @@
                         <v-flex
                           slot="item"
                           slot-scope="props"
-                          xs12
-                          sm6
-                          md4
-                          lg3
+
                         >
+
                           <v-card>
-                            <v-card-title><h4>{{ props.item.name }}</h4></v-card-title>
+                            <v-card-title><h4>{{ props.item.pair }}</h4></v-card-title>
                             <v-divider></v-divider>
                             <v-list dense>
                               <v-list-tile>
-                                <v-list-tile-content>Calories:</v-list-tile-content>
-                                <v-list-tile-content class="align-end">{{ props.item.calories }}</v-list-tile-content>
+                                <v-list-tile-content>Дата:</v-list-tile-content>
+                                <v-list-tile-content class="align-end">{{ date(props.item.insert_date) }}</v-list-tile-content>
                               </v-list-tile>
                               <v-list-tile>
-                                <v-list-tile-content>Fat:</v-list-tile-content>
-                                <v-list-tile-content class="align-end">{{ props.item.fat }}</v-list-tile-content>
+                                <v-list-tile-content>Биржа:</v-list-tile-content>
+                                <v-list-tile-content class="align-end">{{ props.item.exchange }}</v-list-tile-content>
                               </v-list-tile>
                               <v-list-tile>
-                                <v-list-tile-content>Carbs:</v-list-tile-content>
-                                <v-list-tile-content class="align-end">{{ props.item.carbs }}</v-list-tile-content>
+                                <v-list-tile-content>Средний объем:</v-list-tile-content>
+                                <v-list-tile-content class="align-end">{{ props.item.average_volume }}</v-list-tile-content>
                               </v-list-tile>
                               <v-list-tile>
-                                <v-list-tile-content>Protein:</v-list-tile-content>
-                                <v-list-tile-content class="align-end">{{ props.item.protein }}</v-list-tile-content>
-                              </v-list-tile>
-                              <v-list-tile>
-                                <v-list-tile-content>Sodium:</v-list-tile-content>
-                                <v-list-tile-content class="align-end">{{ props.item.sodium }}</v-list-tile-content>
-                              </v-list-tile>
-                              <v-list-tile>
-                                <v-list-tile-content>Calcium:</v-list-tile-content>
-                                <v-list-tile-content class="align-end">{{ props.item.calcium }}</v-list-tile-content>
-                              </v-list-tile>
-                              <v-list-tile>
-                                <v-list-tile-content>Iron:</v-list-tile-content>
-                                <v-list-tile-content class="align-end">{{ props.item.iron }}</v-list-tile-content>
+                                <v-list-tile-content>Объем:</v-list-tile-content>
+                                <v-list-tile-content class="align-end">{{ props.item.volume }}</v-list-tile-content>
                               </v-list-tile>
                             </v-list>
                           </v-card>
+                          <!-- ДИАЛОГИ -->
+        <v-dialog
+            v-model="settings_dialog"
+            width="500"
+          >
+
+            <v-card>
+              <v-card-title
+                class="headline grey lighten-2"
+                primary-title
+              >
+                Настройки
+              </v-card-title>
+
+              <v-card-text>
+                 Пока нет...
+              </v-card-text>
+
+              <v-divider></v-divider>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+
+                <v-btn
+                  color="primary"
+                  flat
+                  @click="settings_dialog = false"
+                >
+                  Сохранить
+                </v-btn>
+
+
+                <v-btn
+                  color="primary"
+                  flat
+                  @click="settings_dialog = false"
+                >
+                  Отменить
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
                         </v-flex>
                       </v-data-iterator>
+                    </v-flex>
                 </v-layout>
 
 
@@ -120,7 +151,13 @@
               </v-card-actions>-->
             </v-card>
           </v-flex>
+
         </v-layout>
+
+
+
+
+
     </v-slide-y-transition>
   </v-container>
 </template>
@@ -191,7 +228,9 @@ export default {
       exchange: ['okex'],
       pair_disabled: true,
       show_pairs_data: false,
+      settings_dialog: false,
       pair_results: [],
+      positive_signals: [],
       headers: [
           {
             text: 'Пара',
@@ -205,135 +244,15 @@ export default {
           { text: 'Сигнал', value: 'signal' },
           { text: 'Дата', value: 'insert_date' }
         ],
-
-
-
-
-
-
-
-
-        rowsPerPageItems: [4, 8, 12],
+      rowsPerPageItems: [4, 8, 12],
       pagination: {
-        rowsPerPage: 4
-      },
-      items: [
-        {
-          value: false,
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
-        },
-        {
-          value: false,
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
-        },
-        {
-          value: false,
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
-        },
-        {
-          value: false,
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
-        },
-        {
-          value: false,
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
-        },
-        {
-          value: false,
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          sodium: 50,
-          calcium: '0%',
-          iron: '0%'
-        },
-        {
-          value: false,
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: '0%',
-          iron: '2%'
-        },
-        {
-          value: false,
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: '0%',
-          iron: '45%'
-        },
-        {
-          value: false,
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: '2%',
-          iron: '22%'
-        },
-        {
-          value: false,
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: '12%',
-          iron: '6%'
-        }
-      ]
-
-
-
-
+        rowsPerPage: 5
+      }
     }),
+    async beforeMount() {
+       let pp = await axios('http://68.183.64.195:3000/signals/positive');
+       this.positive_signals = pp.data;
+    },
     methods: {
       date(item) {
         return moment.unix(item/1000).format("HH:mm DD/MM/YYYY");

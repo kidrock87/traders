@@ -63,9 +63,6 @@ import axios from 'axios'
 import Chart from 'chart.js'
 import Vue from 'vue'
 
-function getValueA(coin){
-  axio
-}
 
 function intersect(a, b) {
     var d = {};
@@ -138,18 +135,23 @@ export default {
         },
         crypto1: '',
         crypto2: '',
-        cryptos: ['BTCUSD', 'ETHUSD', 'BCHUSD', 'NEOUSD', 'XRPUSD', 'ETCUSD', 'ZECUSD', 'XMRUSD', 'EOSUSD', 'SANUSD', 'AVTUSD', 'OMGUSD', 'LTCUSD', 'IOTUSD', 'NEOUSD', 'ETPUSD']
+        cryptos: []
       }
   },
-  beforeMount() {
-     get_data('BTCUSD', 'ETHUSD').then(aaa => {
-         this.chartData = aaa;
-     });
+  async beforeMount() {
+     let cryptos = await axios('http://68.183.64.195:3000/signals/okex');
+     console.log(cryptos)
+     this.cryptos = cryptos.data;
+
+
+     //get_data('BTCUSD', 'ETHUSD').then(aaa => {
+     //   this.chartData = aaa;
+     //});
   },
   methods: {
     async create_chart() {
-      let lp1 = await axios('http://localhost:3000/tickers/bitfinex/t'+this.crypto1);
-      let lp2 = await axios('http://localhost:3000/tickers/bitfinex/t'+this.crypto2);
+      let lp1 = await axios('http://68.183.64.195:3000/signals/okex/'+this.crypto1);
+      let lp2 = await axios('http://68.183.64.195:3000/signals/okex/'+this.crypto2);
 
       let ask1 = lp1.data[0].ask_price;
       let ask2 = lp2.data[0].ask_price;
@@ -172,7 +174,7 @@ export default {
   },
 
 
-  name: 'HelloWorld'
+  name: 'correlation'
 }
 </script>
 
